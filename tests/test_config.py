@@ -10,7 +10,7 @@ class TestConfig(unittest.TestCase):
     def test_default_credential_token(self):
         with patch.dict(os.environ, {}, clear=True):
             cfg = Config()
-            self.assertEqual(cfg.credential_token, "testing")
+            self.assertEqual(cfg.credential_token, "admin")
             self.assertFalse(cfg.fullscreen)
             self.assertEqual(cfg.monitor, 1)
 

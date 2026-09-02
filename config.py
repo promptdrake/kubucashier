@@ -10,17 +10,38 @@ from pathlib import Path
 from typing import Optional
 
 # Paths
-BASE_DIR = Path(__file__).resolve().parent
-ASSETS_DIR = BASE_DIR / "assets"
-DATABASE_DIR = BASE_DIR / "database"
-DEFAULT_DB_PATH = BASE_DIR / "kubucashier.db"
-ENV_FILE_PATH = BASE_DIR / ".env"
+if getattr(sys, "frozen", False):
+    # Running as compiled PyInstaller executable
+    APP_DIR = Path(sys.executable).resolve().parent
+    BUNDLE_DIR = Path(getattr(sys, "_MEIPASS", APP_DIR))
+else:
+    # Running from source
+    APP_DIR = Path(__file__).resolve().parent
+    BUNDLE_DIR = APP_DIR
+
+BASE_DIR = APP_DIR
+ASSETS_DIR = BUNDLE_DIR / "assets"
+DATABASE_DIR = APP_DIR / "database"
+DEFAULT_DB_PATH = APP_DIR / "kubucashier.db"
+ENV_FILE_PATH = APP_DIR / ".env"
 
 # Available Roles
 ROLES = ["Cashier", "Owner", "Admin", "Sales"]
 
 # Default Credential Token fallback
-DEFAULT_CREDENTIAL_TOKEN = "testing"
+DEFAULT_CREDENTIAL_TOKEN = "admin"
+
+DEFAULT_ENV_TEMPLATE = """# KubuCashier Application Settings
+PASSWORD=admin
+FULLSCREEN=false
+OPEN_IN_MONITOR=1
+BLACK_OTHER_MONITORS=false
+CUSTOMER_DISPLAY_ENABLED=true
+CUSTOMER_DISPLAY_MONITOR=2
+LANGUAGE=id
+PAYMENT_CASH=true
+PAYMENT_QRIS=true
+"""
 
 
 def is_admin_or_owner(role: str) -> bool:
@@ -40,9 +61,15 @@ def get_env_case_insensitive(var_name: str) -> Optional[str]:
 
 
 def load_dotenv(path: Path = ENV_FILE_PATH):
-    """Simple parser for .env file if present."""
+    """Simple parser for .env file if present. Automatically creates default .env if missing."""
     if not path.exists():
-        return
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(DEFAULT_ENV_TEMPLATE.strip() + "\n")
+        except Exception:
+            pass
+
     try:
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
