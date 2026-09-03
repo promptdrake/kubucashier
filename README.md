@@ -19,6 +19,8 @@
 ---
 
 ## 🌟 Key Features
+Default Credential token can be set on .env (same directory with .exe):
+```admin```
 
 ### 🛒 High-Speed POS Register
 - **Keyboard-First Shortcuts**: Instant product search (`F2`), quick checkout (`F9`), and transaction cancel / clear cart (`Esc`).
@@ -94,7 +96,7 @@ python main.py
 ### Configuration (`.env`)
 Copy `.env.example` to `.env` to configure initial system tokens and hardware monitors:
 ```ini
-PASSWORD=admin123
+PASSWORD=admin
 FULLSCREEN=false
 OPEN_IN_MONITOR=1
 CUSTOMER_DISPLAY_ENABLED=true
